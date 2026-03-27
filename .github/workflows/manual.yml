@@ -55,6 +55,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Dependencies
+        run: npm install
+
+       - name: Run Unit Tests
+        run: npm test
+
+       - name: Build Application
+         run: npm run build
+
+
       - name: Run Security Scan
         run: |
           npm audit --audit-level=high
