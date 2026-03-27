@@ -14,12 +14,11 @@ env:
 
 jobs:
 
-# ---------------------------
-# 1. BUILD + UNIT TEST
-# ---------------------------
+  # ---------------------------
+  # 1. BUILD + UNIT TEST
+  # ---------------------------
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -45,10 +44,10 @@ jobs:
           name: build-artifact
           path: dist/
 
-# ---------------------------
-# 2. SECURITY SCAN
-# ---------------------------
- security:
+  # ---------------------------
+  # 2. SECURITY SCAN
+  # ---------------------------
+  security:
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -65,74 +64,65 @@ jobs:
 
       - name: Run Security Scan
         run: npm audit --audit-level=high
-# ---------------------------
-# 3. DEPLOY TO DEV
-# ---------------------------
+
+  # ---------------------------
+  # 3. DEPLOY TO DEV
+  # ---------------------------
   deploy-dev:
     if: github.ref == 'refs/heads/development'
     needs: [build, security]
     runs-on: ubuntu-latest
-
     environment: development
-
     steps:
       - name: Deploy to Dev Server
         run: echo "Deploying to DEV..."
 
-# ---------------------------
-# 4. DEPLOY TO UAT (QA CONTROL)
-# ---------------------------
+  # ---------------------------
+  # 4. DEPLOY TO UAT (QA CONTROL)
+  # ---------------------------
   deploy-uat:
     if: github.ref == 'refs/heads/uat'
     needs: [build, security]
     runs-on: ubuntu-latest
-
     environment:
       name: uat
       url: https://uat-bank-app.com
-
     steps:
       - name: Deploy to UAT
         run: echo "Deploying to UAT..."
 
-# ---------------------------
-# 5. APPROVAL GATE (TEAM LEAD)
-# ---------------------------
+  # ---------------------------
+  # 5. APPROVAL GATE (TEAM LEAD)
+  # ---------------------------
   approval-teamlead:
     needs: deploy-uat
     runs-on: ubuntu-latest
-
     environment:
       name: teamlead-approval
-
     steps:
       - run: echo "Waiting for Team Lead Approval"
 
-# ---------------------------
-# 6. APPROVAL GATE (MANAGEMENT)
-# ---------------------------
+  # ---------------------------
+  # 6. APPROVAL GATE (MANAGEMENT)
+  # ---------------------------
   approval-management:
     needs: approval-teamlead
     runs-on: ubuntu-latest
-
     environment:
       name: management-approval
-
     steps:
       - run: echo "Waiting for Management Approval"
 
-# ---------------------------
-# 7. DEPLOY TO PRODUCTION
-# ---------------------------
+  # ---------------------------
+  # 7. DEPLOY TO PRODUCTION
+  # ---------------------------
   deploy-prod:
     if: github.ref == 'refs/heads/main'
     needs: approval-management
     runs-on: ubuntu-latest
-
     environment:
       name: production
       url: https://bank-app.com
-
     steps:
       - name: Deploy to Production
         run: echo "🚀 Deploying to Production..."
