@@ -1,0 +1,6 @@
+{
+  "appName": "CBS CI/CD Demo",
+  "environment": "development",
+  "version": "v1.0.0",
+  "status": "ready"
+}
